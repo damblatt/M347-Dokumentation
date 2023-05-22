@@ -1,6 +1,6 @@
 # M347 - Dokumentation
 
-Diese Dokumentation soll als Lernhilfe dienen und wichtige Themen, einsatzbereit zur Repetition, zur Verfügung stellen.
+Diese Dokumentation soll als Lernhilfe dienen und wichtige Themen, bei denen ich Schwierigkeiten hatte, einsatzbereit zur Repetition, zur Verfügung stellen.
 
 
 
