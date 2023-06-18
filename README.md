@@ -1,16 +1,12 @@
 # M347 - Dokumentation
 
-Diese Dokumentation soll als Lernhilfe dienen und wichtige Themen, bei denen ich Schwierigkeiten hatte, einsatzbereit zur Repetition, zur Verfügung stellen.
-
-
+Diese Dokumentation soll als Lernhilfe dienen und wichtige Themen, einsatzbereit zur Repetition, zur Verfügung stellen.
 
 ## Container vs. Virtual Machine
 
 Während in jeder virtuellen Maschine ein vollständiges Betriebssystem läuft, bringt ein Container nur die wirklich benötigten Komponenten ohne Betriebssystem mit. Die Container verwenden alle denselben Kernel, nämlich denjenigen des Host-Rechners. Dies spart eine Menge Ressourcen und es können daher sehr viel mehr Container auf einem Host laufen als klassische virtuelle Maschinen.
 
 Container sind als Einheit **isoliert** und sind **portierbar**.
-
-
 
 ## Containerisierung
 
@@ -52,8 +48,6 @@ Container sind als Einheit **isoliert** und sind **portierbar**.
 
 Mit Befehl **docker pull** oder **docker run** werden die benötigten Images aus der konfigurierten Registry gezogen. Der Befehl **docker push** überträgt ein Image in die konfigurierte Registry.
 
-
-
 ## Commands
 
 ### Image herunterladen
@@ -90,11 +84,7 @@ docker rm my-ubuntu-container
 docker rmi ubuntu:latest
 ````
 
-
-
 ![1.4.1](https://gbssg.gitlab.io/m347/img/kap1/4-1.PNG)
-
-
 
 ## Image Namen
 
@@ -110,13 +100,9 @@ source/imagename:tag
 
 Wird keine source angegeben, nimmt docker an, dass eines der offiziellen Dockerimages gemeint ist. Wird kein tag angegeben, wird automatisch das tag latest verwendet.
 
-
-
 ## Datenspeicherung
 
 Standardmässig werden die Daten im Container selbst abgelegt. Das Problem dabei liegt darin, dass die Daten somit bei Neuerstellung verloren gehen (rm). Die Lösung dazu sind Volumes.
-
-
 
 ## Volumes
 
@@ -162,9 +148,43 @@ Als Alternative zu den benannten Volumes kann anstelle eines Namens auch ein Ver
 docker run -d --name mariadb-test3 -v /home/vmadmin/database:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=geheim mariadb
 ````
 
+## Netzwerke
 
+Netzwerke spielen eine wichtige Rolle in der Container-Orchestrierung mit Docker. Sie ermöglichen die Kommunikation zwischen Containern und auch mit der Außenwelt. Docker bietet verschiedene Arten von Netzwerken an, darunter Bridge-Netzwerke, Host-Netzwerke und Overlay-Netzwerke.
+
+Bridge-Netzwerke sind die Standardnetzwerke in Docker und ermöglichen es Containern, über den Host-Netzwerkstack miteinander zu kommunizieren. Jeder Container erhält eine IP-Adresse innerhalb des Bridge-Netzwerks und kann über diese Adresse erreicht werden.
+
+Host-Netzwerke ermöglichen es Containern, den Netzwerkstack des Hosts direkt zu nutzen. Dadurch werden Portkonflikte vermieden, da die Container dieselben Netzwerkressourcen wie der Host verwenden.
+
+Overlay-Netzwerke sind für die Kommunikation zwischen Containern über mehrere Hosts hinweg gedacht. Sie verwenden Virtual Extensible LAN (VXLAN) zur Erweiterung des L2-Segments über Hostgrenzen hinweg.
+
+## Dockerfile
+
+Ein Dockerfile ist eine Textdatei, die die Anweisungen enthält, um ein Docker-Image zu erstellen.
+
+Ein Beispiel für ein Dockerfile:
+
+```
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y python3
+
+COPY app.py /app/
+
+ENV ENVIRONMENT=production
+
+CMD ["python3", "/app/app.py"]
+```
+
+Mit dem Dockerfile kann dann ein Image erstellt werden:
+
+```
+docker build -t myapp:latest .
+```
 
 ## Docker Commands
+
+Mithilfe folgender Commands kann ein individuelles Dockerfile erstellt werden:
 
 | Command    | Beschreibung                                                 |
 | ---------- | ------------------------------------------------------------ |
@@ -180,6 +200,29 @@ docker run -d --name mariadb-test3 -v /home/vmadmin/database:/var/lib/mysql -e M
 | USER       | Gibt den Account für RUN, CMD und ENTRYPOINT an.             |
 | VOLUME     | Definiert einen Mount Point auf ein Verzeichnis auf dem Host oder einem anderen Container. |
 | WORKDIR    | Legt das Arbeitsverzeichnis für RUN, CMD, COPY etc. fest.    |
+
+## Docker-compose
+
+Docker-compose ist ein Tool, das die Verwaltung und Orchestrierung von mehreren Docker-Containern vereinfacht. Es ermöglicht unter anderem das Starten aller Container mit einem einzigen Befehl.
+
+Ein einfaches Beispiel für eine docker-compose.yml-Datei:
+
+```
+codeversion: '3'
+services:
+  web:
+    build: .
+    ports:
+      - 80:80
+    volumes:
+      - ./app:/app
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=geheim
+```
+
+Mit dem Befehl `docker-compose up` können dann alle definierten Dienste gestartet werden.
 
 ## Sonstiges
 
